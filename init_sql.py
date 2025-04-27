@@ -40,5 +40,17 @@ cursor.execute("""
     )
 """)
 
+
+
+# Ajoute une première personne comme base
+ppn = "154852171"
+nom = "Gratier"
+prenom = "Pierre"
+cursor.execute("""INSERT INTO personnes (ppn, nom, prenom) VALUES (?, ?, ?)""",
+               (ppn, nom, prenom))
+
+
+
+
 # Sauvegarder les changements dans la base de données
 conn.commit()

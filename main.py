@@ -1,41 +1,44 @@
 import sqlite3
 import database_utils
 import theses_management
+import other_utils
+import search_utils
+from class_utils import Thesis
+
 
 def main():
     
+    # Tenter de se reconnecter en cas d'échec de connexion à theses.fr
+    http = other_utils.config_strategy()
+
     # Connexion à la base de données SQLite et création du curseur
     conn = sqlite3.connect('theses.db')
     cursor = conn.cursor()
 
-    ### Scrap de theses.fr pour récupérer les données d'une personne de la database
-    pass
 
-    # Données de Pierre Gratier (temporaire)
-    ppn = "154852171"
-    nom = "Gratier"
-    prenom = "Pierre"
-    thesis_id = "2010BOR14083"
-    thesis_title = "Étude du milieu interstellaire de galaxies chimiquement jeunes du Groupe Local"
-    thesis_year = 2010
-    list_ppn_superviseur = ["072315512" ]
-    list_nom_superviseur = ["Braine"]
-    list_prenom_superviseur = ["Jonathan"]
+    # Parcours les personnes de la base de données non processed
+    while True :
+        cursor.execute("SELECT ppn FROM personnes WHERE processed = 0 LIMIT 1")
+        result = cursor.fetchone()
 
-    # Retirer la casse du texte
-    pass
+        if result is None : # Plus personne à traiter
+            break
 
-    # Vérifier que la thèse est en astro
-    pass
+        ppn = result[0]
 
-    # Vérifier si la personne est dans la base de donnée
-    result = database_utils.person_exists(cursor, ppn)
-    if result is None :              # Absent dans la base de donnée
-        _, processed = result
-        if processed is not 1 :     # Si la personne n'a pas encore été processed
+        # Récupère la thèse de la personne
+        phd_dict = search_utils.find_thesis_by_ppn(http, ppn)
 
-            # Ajouter l'auteur, la thèse et le superviseur
-            theses_management.add_author_thesis_and_supervisor(cursor, ppn, nom, prenom, list_ppn_superviseur, list_nom_superviseur, list_prenom_superviseur, thesis_id, thesis_title, thesis_year)
+        # Si pas de thèse, on passe à l'itération d'après
+        if phd_dict == False :
+            database_utils.mark_as_processed(cursor, ppn)
+            continue
+
+        # Transforme les données dictionnaire en object
+        phd = Thesis(phd_dict)
+
+        # Si la personne a fait une thèse en astro, update la database
+        theses_management.add_author_thesis_and_supervisor(cursor, phd)
 
 
 

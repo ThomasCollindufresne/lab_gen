@@ -21,7 +21,6 @@ def add_person(cursor, ppn, nom, prenom):
 # Fonction pour ajouter une thèse
 def add_thesis(cursor, thesis_id, thesis_title, thesis_year, auteur_ppn):
     cursor.execute("""INSERT INTO theses (thesis_id, titre, annee, auteur_ppn) VALUES (?, ?, ?, ?)""", (thesis_id, thesis_title, thesis_year, auteur_ppn))
-    return cursor.lastrowid
 
 # Fonction pour ajouter un superviseur à une thèse
 def add_supervisor(cursor, supervisor_ppn, thesis_id):
