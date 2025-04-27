@@ -36,7 +36,7 @@ cursor.execute("""
         supervisor_ppn TEXT,
         thesis_id TEXT,
         FOREIGN KEY(supervisor_ppn) REFERENCES personnes(ppn),
-        FOREIGN KEY(thesis_id) REFERENCES theses(id)
+        FOREIGN KEY(thesis_id) REFERENCES theses(thesis_id)
     )
 """)
 
