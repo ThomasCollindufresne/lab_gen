@@ -3,6 +3,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import unicodedata
 import re
+import hashlib
 
 
 
@@ -93,3 +94,20 @@ def is_phd_in_astro(phd) :
     """
 
     return(phd_in_astro)
+
+
+
+
+
+
+def generate_unique_id(nom, prenom, thesis_title):
+    # Concatenation Nom + Prénom + Titre_these pour avoir une chaîne de texte unique
+    unique_string = f"{nom}_{prenom}_{thesis_title}"
+    
+    # Création du hash
+    hash_object = hashlib.sha256(unique_string.encode())
+    
+    # Retourne une version hexadécimale du hash (qui est un identifiant unique de 64 caractères)
+    return hash_object.hexdigest()
+
+

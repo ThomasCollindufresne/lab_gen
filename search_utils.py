@@ -19,19 +19,22 @@ def find_thesis_by_ppn(http, ppn):
     # Si aucune thèse trouvée, False
     if data['totalHits'] == 0 :
         return False
-
-    # Si plus d'une thèse trouvée, Error 
-    elif data['totalHits'] > 1 :
-         raise ValueError("Vérifier si c'est normal que la personne possède 2 thèses pour un même ppn")
-         
-    # Si une unique thèse trouvée
+        
+    # Sinon
     else :
-        # Vérifier si la thèse est en astro
-        phd = data['theses'][0]
-        if other_utils.is_phd_in_astro(phd) :
-            return(phd)
+        list_phd = []
+        for phd in data['theses'] :
+            # Vérifier si la thèse est en astro
+            if other_utils.is_phd_in_astro(phd) :
+                list_phd.append(phd)
+        
+        if len(list_phd) == 1 :
+            return(list_phd[0])
+        elif len(list_phd) == 0 :
+            return(False)
+        else :
+            raise ValueError("La personne a fait plusieurs thèses en astro ???")
 
-    return(False)
 
 
 
@@ -71,10 +74,14 @@ def find_supervised_theses_by_name(http, ppn):
         list_phd = []
 
         # Pour chaque thèse :
-        for i, phd in enumerate(data['theses']) :
+        for phd in data['theses'] :
             
             # Si la thèse est en astro
             if other_utils.is_phd_in_astro(phd) :
                 list_phd.append(phd)
-
-    return(False)
+        
+        if len(list_phd) > 0 :
+            return(list_phd)
+        
+        else :
+            return(False)

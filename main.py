@@ -29,32 +29,41 @@ def main():
         # Récupère la thèse de la personne
         phd_dict = search_utils.find_thesis_by_ppn(http, ppn)
 
-        # Si pas de thèse, on passe à l'itération d'après
-        if phd_dict == False :
-            database_utils.mark_as_processed(cursor, ppn)
-            continue
+        # S'il y a une thèse
+        if phd_dict != False :
 
-        # Transforme les données dictionnaire en object
-        phd = Thesis(phd_dict)
+            # Transforme les données dictionnaire en object
+            phd = Thesis(phd_dict)
 
-        # Si la personne a fait une thèse en astro, update la database
-        theses_management.add_author_thesis_and_supervisor(cursor, phd)
+            # Si la personne a fait une thèse en astro, update la database
+            theses_management.add_author_thesis_and_supervisor(cursor, phd)
 
 
+        # Récupère les thèses encadrées par la personne
+        list_phd_dict = search_utils.find_supervised_theses_by_name(http, ppn)
 
-    # Rajouter, sous forme de nouveaux auteurs, les personnes encadrées par ppn
-    pass
+        # S'il y a une thèse encadrée
+        if list_phd_dict != False :
+
+            for phd_dict in list_phd_dict :
+
+                # Transforme les données dictionnaire en object
+                phd = Thesis(phd_dict)
+
+                # Si la personne a fait une thèse en astro, rajoute juste l'auteur sans processed
+                theses_management.add_person_if_not_exists(cursor, phd.ppn, phd.nom, phd.prenom, phd.thesis_id)
 
 
 
 
+        # Marque la personne comme 'processed'
+        database_utils.mark_as_processed(cursor, ppn)
 
-
-
-    # Sauvegarder les changements
-    conn.commit()
+        # Sauvegarder les changements
+        conn.commit()
     
     # Fermer la connexion
     conn.close()
 
 main()
+print("End")
