@@ -44,8 +44,8 @@ cursor.execute("""
 
 # Ajoute une première personne comme base
 ppn = "154852171"
-nom = "Gratier"
-prenom = "Pierre"
+nom = "gratier"
+prenom = "pierre"
 cursor.execute("""INSERT INTO personnes (ppn, nom, prenom) VALUES (?, ?, ?)""",
                (ppn, nom, prenom))
 

@@ -18,16 +18,16 @@ def main():
 
     # Parcours les personnes de la base de données non processed
     while True :
-        cursor.execute("SELECT ppn FROM personnes WHERE processed = 0 LIMIT 1")
+        cursor.execute("SELECT ppn, nom, prenom  FROM personnes WHERE processed = 0 LIMIT 1")
         result = cursor.fetchone()
 
         if result is None : # Plus personne à traiter
             break
 
-        ppn = result[0]
+        ppn, nom, prenom = result
 
         # Récupère la thèse de la personne
-        phd_dict = search_utils.find_thesis_by_ppn(http, ppn)
+        phd_dict = search_utils.find_thesis_by_ppn(http, ppn, nom, prenom)
 
         # S'il y a une thèse
         if phd_dict != False :
@@ -40,7 +40,7 @@ def main():
 
 
         # Récupère les thèses encadrées par la personne
-        list_phd_dict = search_utils.find_supervised_theses_by_name(http, ppn)
+        list_phd_dict = search_utils.find_supervised_theses_by_name(http, ppn, nom, prenom)
 
         # S'il y a une thèse encadrée
         if list_phd_dict != False :

@@ -33,7 +33,6 @@ class Thesis:
                 unique_id = generate_unique_id(clean_text(directeur["nom"]), clean_text(directeur["prenom"]), self.thesis_title)
                 list_ppn_superviseur.append(unique_id)
 
-            list_ppn_superviseur.append(directeur["ppn"])
 
         self.list_ppn_superviseur = list_ppn_superviseur
         self.list_nom_superviseur = list_nom_superviseur
